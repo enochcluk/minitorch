@@ -65,19 +65,19 @@ def test_linear(inputs: List[Scalar], out_size: int) -> None:
     lin2.forward(mid)
 
 
-# @given(
-#     lists(scalars(min_value=-10, max_value=10), min_size=2, max_size=2),
-#     lists(scalars(min_value=-10, max_value=10), min_size=2, max_size=2),
-# )
-# def test_nn2(inputs, bias):
-#     model = Network2()
+@given(
+    lists(scalars(min_value=-10, max_value=10), min_size=2, max_size=2),
+    lists(scalars(min_value=-10, max_value=10), min_size=2, max_size=2),
+)
+def test_nn2(inputs, bias):
+    model = Network2()
 
-#     def check(x1, x2, b1, b2):
-#         model.layer1.bias[0].update(b1)
-#         model.layer1.bias[1].update(b2)
-#         return model.forward([x1, x2])
+    def check(x1, x2, b1, b2):
+        model.layer1.bias[0].update(b1)
+        model.layer1.bias[1].update(b2)
+        return model.forward([x1, x2])
 
-#     minitorch.derivative_check(check, *(inputs + bias))
+    minitorch.derivative_check(check, *(inputs + bias))
 
 
 def test_nn_size() -> None:
