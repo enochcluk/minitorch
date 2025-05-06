@@ -5,6 +5,9 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      MAX_MODULE: 0  # change this to control how many modules are tested
+
     strategy:
       matrix:
         python-version: [3.8]
@@ -25,30 +28,42 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           flake8 --ignore "N801, E203, E266, E501, W503, F812, F821, F401, F841, E741, N803, N802, N806" minitorch/ tests/ project/
+
       - name: Test with pytest
+
         run: |
-          echo "Module 0"
-          pytest tests -x -m task0_1
-          pytest tests -x -m task0_2
-          pytest tests -x -m task0_3
-          pytest tests -x -m task0_4
-          echo "Module 1"
-          pytest tests -x -m task1_1
-          pytest tests -x -m task1_2
-          pytest tests -x -m task1_3
-          pytest tests -x -m task1_4
-          echo "Module 2"
-          pytest tests -x -m task2_1
-          pytest tests -x -m task2_2
-          pytest tests -x -m task2_3
-          pytest tests -x -m task2_4
-          echo "Module 3"
-          pytest tests -x -m task3_1
-          pytest tests -x -m task3_2
-          pytest tests -x -m task3_3
-          pytest tests -x -m task3_4
-          echo "Module 4"
-          pytest tests -x -m task4_1
-          pytest tests -x -m task4_2
-          pytest tests -x -m task4_3
-          pytest tests -x -m task4_4
+          if [ "$MAX_MODULE" -ge 0 ]; then
+            echo "Module 0"
+            pytest tests -x -m task0_1
+            pytest tests -x -m task0_2
+            pytest tests -x -m task0_3
+            pytest tests -x -m task0_4
+          fi
+          if [ "$MAX_MODULE" -ge 1 ]; then
+            echo "Module 1"
+            pytest tests -x -m task1_1
+            pytest tests -x -m task1_2
+            pytest tests -x -m task1_3
+            pytest tests -x -m task1_4
+          fi
+          if [ "$MAX_MODULE" -ge 2 ]; then
+            echo "Module 2"
+            pytest tests -x -m task2_1
+            pytest tests -x -m task2_2
+            pytest tests -x -m task2_3
+            pytest tests -x -m task2_4
+          fi
+          if [ "$MAX_MODULE" -ge 3 ]; then
+            echo "Module 3"
+            pytest tests -x -m task3_1
+            pytest tests -x -m task3_2
+            pytest tests -x -m task3_3
+            pytest tests -x -m task3_4
+          fi
+          if [ "$MAX_MODULE" -ge 4 ]; then
+            echo "Module 4"
+            pytest tests -x -m task4_1
+            pytest tests -x -m task4_2
+            pytest tests -x -m task4_3
+            pytest tests -x -m task4_4
+          fi
