@@ -42,7 +42,7 @@ def test_layout_bad() -> None:
 @pytest.mark.task2_1
 @given(tensor_data())
 def test_enumeration(tensor_data: TensorData) -> None:
-    "Test enumeration of tensor_datas."
+    "Test enumeration of tensor_data."
     indices = list(tensor_data.indices())
 
     # Check that enough positions are enumerated.

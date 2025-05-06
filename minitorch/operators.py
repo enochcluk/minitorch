@@ -24,9 +24,11 @@ def add(x: float, y: float) -> float:
     "$f(x, y) = x + y$"
     return x + y
 
+
 def neg(x: float) -> float:
     "$f(x) = -x$"
     return -x
+
 
 def lt(x: float, y: float) -> float:
     "$f(x) =$ 1.0 if x is less than y else 0.0"
@@ -66,6 +68,7 @@ def sigmoid(x: float) -> float:
         ex = math.exp(x)
         return ex / (1.0 + ex)
 
+
 def relu(x: float) -> float:
     """
     $f(x) =$ x if x is greater than 0, else 0
@@ -73,7 +76,6 @@ def relu(x: float) -> float:
     (See https://en.wikipedia.org/wiki/Rectifier_(neural_networks) .)
     """
     return x if x > 0 else 0.0
-
 
 
 EPS = 1e-6
@@ -94,7 +96,6 @@ def log_back(x: float, d: float) -> float:
     return d * (1.0 / (x + EPS))
 
 
-
 def inv(x: float) -> float:
     "$f(x) = 1/x$"
     return 1.0 / x
@@ -105,11 +106,9 @@ def inv_back(x: float, d: float) -> float:
     return d * (-1.0 / (x * x))
 
 
-
 def relu_back(x: float, d: float) -> float:
     r"If $f = relu$ compute $d \times f'(x)$"
     return d if x > 0 else 0.0
-
 
 
 # ## Task 0.3
@@ -130,8 +129,10 @@ def map(fn: Callable[[float], float]) -> Callable[[Iterable[float]], Iterable[fl
          A function that takes a list, applies `fn` to each element, and returns a
          new list
     """
+
     def apply(ls: Iterable[float]) -> Iterable[float]:
         return [fn(x) for x in ls]
+
     return apply
 
 
@@ -141,7 +142,7 @@ def negList(ls: Iterable[float]) -> Iterable[float]:
 
 
 def zipWith(
-    fn: Callable[[float, float], float]
+    fn: Callable[[float, float], float],
 ) -> Callable[[Iterable[float], Iterable[float]], Iterable[float]]:
     """
     Higher-order zipwith (or map2).
@@ -156,14 +157,16 @@ def zipWith(
          applying fn(x, y) on each pair of elements.
 
     """
-    def apply(ls1 : Iterable[float], ls2: Iterable[float]) -> Iterable[float]:
-        return [fn(x,y) for x,y in zip(ls1,ls2)]
+
+    def apply(ls1: Iterable[float], ls2: Iterable[float]) -> Iterable[float]:
+        return [fn(x, y) for x, y in zip(ls1, ls2)]
+
     return apply
 
 
 def addLists(ls1: Iterable[float], ls2: Iterable[float]) -> Iterable[float]:
     "Add the elements of `ls1` and `ls2` using `zipWith` and `add`"
-    return zipWith(add)(ls1,ls2)
+    return zipWith(add)(ls1, ls2)
 
 
 def reduce(
@@ -181,17 +184,20 @@ def reduce(
          $x_1 \ldots x_n$ and computes the reduction :math:`fn(x_3, fn(x_2,
          fn(x_1, x_0)))`
     """
+
     def apply(ls: Iterable[float]) -> float:
         result = start
         for x in ls:
             result = fn(result, x)
         return result
+
     return apply
 
 
 def sum(ls: Iterable[float]) -> float:
     "Sum up a list using `reduce` and `add`."
     return reduce(add, 0)(ls)
+
 
 def prod(ls: Iterable[float]) -> float:
     "Product of a list using `reduce` and `mul`."
