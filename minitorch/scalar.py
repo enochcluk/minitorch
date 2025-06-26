@@ -6,11 +6,8 @@ from typing import Any, Iterable, Optional, Sequence, Tuple, Type, Union
 import numpy as np
 
 from .autodiff import Context, Variable, backpropagate, central_difference
-from .scalar_functions import (
-    Inv,
-    Mul,
-    ScalarFunction,
-)
+
+from .scalar_functions import ScalarFunction, Inv, Add, Mul, Neg, Log, Exp, Sigmoid, ReLU, LT, EQ
 
 ScalarLike = Union[float, int, "Scalar"]
 
@@ -82,55 +79,52 @@ class Scalar:
 
     def __rtruediv__(self, b: ScalarLike) -> Scalar:
         return Mul.apply(b, Inv.apply(self))
-
-    def __add__(self, b: ScalarLike) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError("Need to implement for Task 1.2")
-
-    def __bool__(self) -> bool:
-        return bool(self.data)
-
-    def __lt__(self, b: ScalarLike) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError("Need to implement for Task 1.2")
-
-    def __gt__(self, b: ScalarLike) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError("Need to implement for Task 1.2")
-
-    def __eq__(self, b: ScalarLike) -> Scalar:  # type: ignore[override]
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError("Need to implement for Task 1.2")
-
-    def __sub__(self, b: ScalarLike) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError("Need to implement for Task 1.2")
-
-    def __neg__(self) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError("Need to implement for Task 1.2")
-
+    
     def __radd__(self, b: ScalarLike) -> Scalar:
-        return self + b
+        return Add.apply(self, b)
 
     def __rmul__(self, b: ScalarLike) -> Scalar:
-        return self * b
+        return Mul.apply(self, b)
+    
+    def __rsub__(self, b: ScalarLike) -> Scalar:
+        return Add.apply(b, Neg.apply(self))
+
+    def __truediv__(self, b: ScalarLike) -> Scalar:
+        return Mul.apply(self, Inv.apply(b))
+
+    def __rtruediv__(self, b: ScalarLike) -> Scalar:
+        return Mul.apply(b, Inv.apply(self))
+
+    def __add__(self, b: ScalarLike) -> Scalar:
+        return Add.apply(self, b)
+
+    def __lt__(self, b: ScalarLike) -> Scalar:
+        return LT.apply(self, b)
+
+    def __gt__(self, b: ScalarLike) -> Scalar:
+        return LT.apply(b, self)
+
+    def __eq__(self, b: ScalarLike) -> Scalar:
+        return EQ.apply(self, b)
+
+    def __sub__(self, b: ScalarLike) -> Scalar:
+        return Add.apply(self, Neg.apply(b))
+
+    def __neg__(self) -> Scalar:
+        return Neg.apply(self)
 
     def log(self) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError("Need to implement for Task 1.2")
+        return Log.apply(self)
 
     def exp(self) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError("Need to implement for Task 1.2")
+        return Exp.apply(self)
 
     def sigmoid(self) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError("Need to implement for Task 1.2")
+        return Sigmoid.apply(self)
 
     def relu(self) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError("Need to implement for Task 1.2")
+        return ReLU.apply(self)
+
 
     # Variable elements for backprop
 
@@ -165,8 +159,10 @@ class Scalar:
         assert h.last_fn is not None
         assert h.ctx is not None
 
-        # TODO: Implement for Task 1.3.
-        raise NotImplementedError("Need to implement for Task 1.3")
+        gradients = h.last_fn._backward(h.ctx, d_output)
+        assert len(gradients) == len(h.inputs), f"Mismatch: {len(gradients)} grads vs {len(h.inputs)} inputs"
+        
+        return [(inp, grad) for inp, grad in zip(h.inputs, gradients)]
 
     def backward(self, d_output: Optional[float] = None) -> None:
         """
